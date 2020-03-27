@@ -1,6 +1,6 @@
 #!/usr/bin/python
 import socket, struct, time, SocketServer, re, subprocess, sys, logging, logging.handlers
-import thread, requests, os
+import thread, requests, os, glob
 from threading import Thread
 from shutil import move
 
@@ -14,14 +14,17 @@ from shutil import move
 BCAST_IP = "239.255.255.250" #standard upnp multicast address--don't change
 UPNP_PORT = 1900             #standard upnp multicast port--don't change
 GPHOTO_CMD = "gphoto2"
-GPHOTO_ARGS = ["-P","--skip-existing"]
-GPHOTO_SETTINGS = "~/.gphoto/settings" #default location gphoto2 uses
+GPHOTO_ARGS = os.environ['GPHOTO_ARGS'].split(',')
+GPHOTO_SETTINGS = "~/.gphoto/settings"    #default location gphoto2 uses
 CUSTOM_LD_LIBRARY_PATH = "/usr/local/lib" #common path if self-compiled
 
 #Might want to change:
 PHOTO_DIR = "/var/lib/Sony"  #photo/videos will be downloaded to here
 PTP_GUID = os.environ['PTP_GUID']
 DEBUG = os.environ['DEBUG'].lower() in ['true', '1', 'yes', 'y']
+
+PUID = int(os.environ['PUID'])    #set owner/group of downloaded files
+PGID = int(os.environ['PGID'])
 #------------------------------------------------------------------
 
 #replace '~' if used
@@ -71,6 +74,8 @@ L.debug("UPNP_PORT set to: {}".format(UPNP_PORT))
 L.debug("GPHOTO_SETTINGS set to: {}".format(GPHOTO_SETTINGS))
 L.debug("PTP_GUID set to: {}".format(PTP_GUID))
 L.debug("GPHOTO_ARGS set to: {}".format(GPHOTO_ARGS))
+L.debug("PUID set to: {}".format(PUID))
+L.debug("PGID set to: {}".format(PGID))
 
 
 #NOTES...
@@ -164,12 +169,17 @@ class Responder(Thread):
                              GPHOTO_ARGS
                 L.debug("Executing: {}".format(gphoto_cmd))
                 PROC = subprocess.Popen(gphoto_cmd)
+                PROC.communicate()
+                L.info("Changing ownership of files: {}:{}".format(PUID, PGID))
+                for file in glob.glob('*.*'):
+                  os.chown(file, PUID, PGID)
+                L.info("Done: {}".format(addr))
           L.debug("----------------------")
           L.debug("  ")
-#        else:
-#          L.info("received data - ignoring")
-#          L.debug("----------------------")
-#          L.debug("  ")
+        else:
+          L.debug(" ignored data:\n{}".format(data.strip()))
+          L.debug("----------------------")
+          L.debug("  ")
 
   def stop(self):
     self.interrupted = True

@@ -99,6 +99,10 @@ $ docker run \
     --name=sony-pm-alt \
     --net=host \
     -e PTP_GUID=ff:ff:52:54:00:b6:fd:a9:ff:ff:52:3c:28:07:a9:3a (edit as needed) \
+    -e GPHOTO_ARGS=--get-all-files,--skip-existing (comma separated) \
+    -e PUID=1000 \
+    -e PGID=1000 \
+    -e DEBUG=false \
     -v /folder/for/incoming/photos:/var/lib/Sony \
     sony-pm-alt
 ```
