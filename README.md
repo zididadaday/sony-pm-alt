@@ -65,7 +65,7 @@ DOCKER PARAMETERS:
 ------------------
 
 | Default Parameters | Function |
-| :----------------: | -------- |
+| ------------------ | -------- |
 | `-e PTP_GUID="ff:ff:52:54:00:b6:fd:a9:ff:ff:52:3c:28:07:a9:3a"` | Computer GUID in hex format. Default is the value set by the `sony-guid-setter` tool |
 | `-e GPHOTO_ARGS=--get-all-files,--skip-existing` | Comma-separated arguments to pass to `gphoto2`. See the [gphoto2 manpages](http://www.gphoto.org/doc/manual/ref-gphoto2-cli.html) for more |
 | `-e PUID=1000`   | Set UID for downloaded files |
