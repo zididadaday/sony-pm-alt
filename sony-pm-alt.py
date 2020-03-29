@@ -25,6 +25,8 @@ DEBUG = os.environ['DEBUG'].lower() in ['true', '1', 'yes', 'y']
 
 PUID = int(os.environ['PUID'])    #set owner/group of downloaded files
 PGID = int(os.environ['PGID'])
+
+SAVE_TO_DATE_FOLDERS = os.environ['SAVE_TO_DATE_FOLDERS'].lower() in ['true', '1', 'yes', 'y']
 #------------------------------------------------------------------
 
 #replace '~' if used
@@ -170,11 +172,12 @@ class Responder(Thread):
                 PROC = subprocess.Popen(gphoto_cmd)
                 PROC.communicate()
 
-                # Need to use shell=True as Popen will strip the extra dash that's not actually an arg used by exiftool 
-                exiftool_cmd = ['exiftool -d %Y-%m-%d "-Directory<DateTimeOriginal" .']
-                L.info("Executing: {}".format(exiftool_cmd))
-                PROC = subprocess.Popen(exiftool_cmd, shell=True)
-                PROC.communicate()
+                if SAVE_TO_DATE_FOLDERS is True:
+                  # Need to use shell=True as Popen will strip the extra dash that's not actually an arg used by exiftool 
+                  exiftool_cmd = ['exiftool -d %Y-%m-%d "-Directory<DateTimeOriginal" .']
+                  L.info("Executing: {}".format(exiftool_cmd))
+                  PROC = subprocess.Popen(exiftool_cmd, shell=True)
+                  PROC.communicate()
 
                 chown_cmd = ["chown", "-R", "{}:{}".format(PUID, PGID), "."]
                 L.info("Executing: {}".format(chown_cmd))

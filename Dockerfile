@@ -5,12 +5,14 @@ EXPOSE 15740/udp
 EXPOSE 1900/udp
 
 ENV PTP_GUID="ff:ff:52:54:00:b6:fd:a9:ff:ff:52:3c:28:07:a9:3a"
-ENV DEBUG=false
 
 ENV PUID=1000
 ENV PGID=1000
 
 ENV GPHOTO_ARGS=--get-all-files,--skip-existing
+ENV SAVE_TO_DATE_FOLDERS=false
+
+ENV DEBUG=false
 
 RUN apk add --no-cache gphoto2 exiftool
 RUN pip install --no-cache requests
