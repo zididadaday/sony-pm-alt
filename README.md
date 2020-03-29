@@ -56,6 +56,7 @@ docker create \
     -e GPHOTO_ARGS=<gphoto2 arguments, comma-separated> \
     -e PUID=1000 \
     -e PGID=1000 \
+    -e SAVE_TO_DATE_FOLDERS=false \
     -e DEBUG=false \
     -v <path to incoming photos folder>:/var/lib/Sony \
     bnutz/sony-pm-alt
@@ -70,6 +71,7 @@ DOCKER PARAMETERS:
 | `-e GPHOTO_ARGS=--get-all-files,--skip-existing` | Comma-separated arguments to pass to `gphoto2`. See the [gphoto2 manpages](http://www.gphoto.org/doc/manual/ref-gphoto2-cli.html) for more |
 | `-e PUID=1000`   | Set UID for downloaded files |
 | `-e PGID=1000`   | Set GID for downloaded files |
+| `-e SAVE_TO_DATE_FOLDERS=false`   | Move downloaded photos into folders sorted by date taken (yyyy-mm-dd) |
 | `-e DEBUG=false` | Set debug logging |
 | `-v /path/to/incoming/photo/folder:/var/lib/Sony` | Path to photo download folder on host machine |
 | `-p 15740/tcp` | PTP/IP port (only needed if using bridge networking) |
