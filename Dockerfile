@@ -12,7 +12,7 @@ ENV PGID=1000
 
 ENV GPHOTO_ARGS=--get-all-files,--skip-existing
 
-RUN apk add --no-cache gphoto2
+RUN apk add --no-cache gphoto2 exiftool
 RUN pip install --no-cache requests
 
 WORKDIR /root

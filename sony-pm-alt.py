@@ -1,6 +1,6 @@
 #!/usr/bin/python
 import socket, struct, time, SocketServer, re, subprocess, sys, logging, logging.handlers
-import thread, requests, os, glob
+import thread, requests, os
 from threading import Thread
 from shutil import move
 
@@ -164,16 +164,24 @@ class Responder(Thread):
               if "Sony Corporation" in r.content:
                 L.debug("Camera Found...starting gphoto")
                 ValidateUpdateSettings(GPHOTO_SETTINGS, addr[0], PTP_GUID)
-                gphoto_cmd = [GPHOTO_CMD,
-                              "--port", "ptpip:{}".format(addr[0])] + \
+                gphoto_cmd = [GPHOTO_CMD, "--port", "ptpip:{}".format(addr[0])] + \
                              GPHOTO_ARGS
-                L.debug("Executing: {}".format(gphoto_cmd))
+                L.info("Executing: {}".format(gphoto_cmd))
                 PROC = subprocess.Popen(gphoto_cmd)
                 PROC.communicate()
-                L.info("Changing ownership of files: {}:{}".format(PUID, PGID))
-                for file in glob.glob('*.*'):
-                  os.chown(file, PUID, PGID)
-                L.info("Done: {}".format(addr))
+
+                # Need to use shell=True as Popen will strip the extra dash that's not actually an arg used by exiftool 
+                exiftool_cmd = ['exiftool -d %Y-%m-%d "-Directory<DateTimeOriginal" .']
+                L.info("Executing: {}".format(exiftool_cmd))
+                PROC = subprocess.Popen(exiftool_cmd, shell=True)
+                PROC.communicate()
+
+                chown_cmd = ["chown", "-R", "{}:{}".format(PUID, PGID), "."]
+                L.info("Executing: {}".format(chown_cmd))
+                PROC = subprocess.Popen(chown_cmd)
+                PROC.communicate()
+
+                L.info("--- Done: {}".format(addr))
           L.debug("----------------------")
           L.debug("  ")
         else:
