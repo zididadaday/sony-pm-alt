@@ -115,6 +115,6 @@ docker exec -it sony-pm-alt /bin/sh
 * See the [Troubleshooting Section](https://github.com/falk0069/sony-pm-alt#troubleshooting) in the original repo for additional `gphoto2` checks.
 
 ### PYTHON SCRIPT
-* The main script is `sony-pm-alt.py`, which is just a basic python server that will listen for the correct UPNP broadcast. Once detected, it will trigger `gphoto2` with the given arguments. For any script-specific issues, please check the [Troubleshooting Section](https://github.com/falk0069/sony-pm-alt#troubleshooting) and the [issue tracker](https://github.com/falk0069/sony-pm-alt/issues) in the original repo.
+* The main script is `sony-pm-alt.py`, which is just a basic python server that will listen for the correct UPNP broadcast. Once detected, it will trigger `gphoto2` with the given arguments. For any issues related to the actual camera connection and photo transfer, please check the [Troubleshooting Section](https://github.com/falk0069/sony-pm-alt#troubleshooting) and the [issue tracker](https://github.com/falk0069/sony-pm-alt/issues) in the original repo.
 
-* For any docker-related issues, feel free to raise them [here](https://github.com/bnutz/sony-pm-alt/issues).
+* For any post-processing (folder creation and file ownership) issues or docker-related issues, feel free to raise them [here](https://github.com/bnutz/sony-pm-alt/issues).
