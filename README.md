@@ -49,7 +49,7 @@ DOCKER:
 -------
 
 ```
-docker create \
+docker run \
     --name=sony-pm-alt \
     --net=host \
     -e PTP_GUID=<computer GUID in hex format> \
