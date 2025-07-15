@@ -1,4 +1,4 @@
-FROM python:2-alpine3.22
+FROM python:3-alpine3.22
 
 EXPOSE 15740/tcp
 EXPOSE 15740/udp
