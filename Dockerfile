@@ -29,4 +29,4 @@ ADD sony-pm-alt.py .
 
 VOLUME /var/lib/Sony
 
-CMD /root/make_gphoto_settings.sh && exec python sony-pm-alt.py
+CMD /root/make_gphoto_settings.sh && exec python3 sony-pm-alt.py
