@@ -1,0 +1,21 @@
+---
+ library.c |    2 --
+ 1 file changed, 2 deletions(-)
+
+diff --git a/camlibs/ptp2/library.c b/camlibs/ptp2/library.c
+index 77a163e..a5601fa 100644
+--- a/camlibs/ptp2/library.c
++++ b/camlibs/ptp2/library.c
+@@ -3256,12 +3256,10 @@ camera_exit (Camera *camera, GPContext *context)
+ 			}
+ 			break;
+ 		case PTP_VENDOR_SONY:
+-#if 0
+ 			/* if we call this, the camera shuts down on close in MTP mode */
+ 			if (ptp_operation_issupported(params, 0x9280)) {
+ 				C_PTP (ptp_sony_9280(params, 0x4,0,5,0,0,0,0));
+ 			}
+-#endif
+ 			break;
+ 		case PTP_VENDOR_FUJI:
+ 			CR (camera_unprepare_capture (camera, context));

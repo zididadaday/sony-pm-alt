@@ -14,16 +14,22 @@ ENV SAVE_TO_DATE_FOLDERS=false
 
 ENV DEBUG=false
 
-RUN apk add --no-cache gphoto2 exiftool
+RUN apk add --no-cache gphoto2 exiftool git make autoconf gettext gettext-dev automake gcc libtool g++ pkgconfig patch libexif libexif-dev
 RUN pip install --no-cache requests
 
 WORKDIR /root
 
 ADD make_gphoto_settings.sh .
 ADD gphoto_connect_test.sh .
+ADD make_libgphoto2.sh .
+ADD sony-library_c.patch .
 
 RUN chmod +x make_gphoto_settings.sh
 RUN chmod +x gphoto_connect_test.sh
+RUN chmod +x make_libgphoto2.sh
+
+RUN /root/make_libgphoto2.sh
+RUN apk del git make autoconf gettext gettext-dev automake gcc libtool g++ pkgconfig patch libexif libexif-dev
 
 ADD sony-pm-alt.py .
 
