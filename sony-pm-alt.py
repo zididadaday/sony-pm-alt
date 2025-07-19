@@ -3,6 +3,7 @@ import socket, struct, time, socketserver, re, subprocess, sys, logging, logging
 import _thread, requests, os
 from threading import Thread
 from shutil import move
+from urllib.parse import urlparse
 
 #  install pip and requests if missing:
 #  sudo apt-get install python-pip
@@ -17,6 +18,7 @@ GPHOTO_CMD = "gphoto2"
 GPHOTO_ARGS = os.environ['GPHOTO_ARGS'].split(',')
 GPHOTO_SETTINGS = "~/.gphoto/settings"    #default location gphoto2 uses
 CUSTOM_LD_LIBRARY_PATH = "/usr/local/lib" #common path if self-compiled
+WAIT_TIME = 30 # implemented a wait before next file receive
 
 #Might want to change:
 PHOTO_DIR = "/var/lib/Sony"  #photo/videos will be downloaded to here
@@ -154,21 +156,22 @@ class Responder(Thread):
           return
       else:
         if "MtpNullService" in data and PROC.poll() is not None:
-          L.info("received MtpNullService from {}".format(addr))
+          L.debug("received MtpNullService from {}".format(addr))
           L.debug(" data:\n{}".format(data.strip()))
           searchObj = re.search( r'LOCATION: (.+\.xml)', data, re.I)
           if searchObj and "://" in searchObj.group(1):
             try:
               r = requests.get(searchObj.group(1), timeout=4)
             except requests.exceptions.RequestException:
-               L.warning("Connection Error")
+               L.debug("Nothing to receive - empty messages after send complete")               
             else:
-              L.debug("Got XML - verify if our camera")
+              L.info("Got XML - verify if our camera")
+              url_parts = urlparse(searchObj.group(1))
               if "Sony Corporation" in r.content.decode('UTF-8'):
-                L.debug("Camera Found...starting gphoto")
-                ValidateUpdateSettings(GPHOTO_SETTINGS, addr[0], PTP_GUID)
+                L.info("Camera Found...starting gphoto")
+                ValidateUpdateSettings(GPHOTO_SETTINGS, url_parts.hostname, PTP_GUID)
                 gphoto_cmd = [GPHOTO_CMD,
-                              "--port", "ptpip:{}".format(addr[0])] + \
+                              "--port", "ptpip:{}".format(url_parts.hostname)] + \
                              GPHOTO_ARGS
                 L.info("Executing: {}".format(gphoto_cmd))
                 PROC = subprocess.Popen(gphoto_cmd)
@@ -186,11 +189,13 @@ class Responder(Thread):
                 PROC = subprocess.Popen(chown_cmd)
                 PROC.communicate()
 
-                L.info("--- Done: {}".format(addr))
+                L.info("--- Done, shutting down camera: {}".format(addr))
+                L.info("--- Waiting for {} seconds before next try".format(WAIT_TIME))
+                time.sleep(WAIT_TIME) # Wait time before next try
+                L.info("--- Wait over, ready for next connection")
           L.debug("----------------------")
           L.debug("  ")
         else:
-          #L.info(" ignored data:\n{}".format(data.strip()))
           L.debug(" ignored data:\n{}".format(data.strip()))
           L.debug("----------------------")
           L.debug("  ")
